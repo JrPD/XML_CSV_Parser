@@ -28,7 +28,7 @@ namespace TextParser.Controllers
 		[HttpGet]
 		public XElement GetParsedText()
 		{
-			string filePath =ParseFunc.GetFileName();
+			string filePath = ParseFunc.GetFileName();
 
 			var xml = XElement.Load(filePath);
 

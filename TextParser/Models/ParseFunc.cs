@@ -17,24 +17,25 @@ namespace TextParser.Models
 		// parse text into revalent model classes
 		public static Text ParseInputText(string inputText)
 		{
-			inputText = inputText.Replace("\"", "").Replace("(", "").Replace(")", "").Replace("—", "");
-			inputText = Regex.Replace(inputText, @"\s+$\n|\r", "", RegexOptions.Multiline).TrimEnd();//Regex.Replace(inputText, @"\s+", " ");
-			
-			// split into sentences
-			char[] sentenceDelimiterChars = { '.', '!', '?', '\n' };
-			string[] sentences = inputText.Split(sentenceDelimiterChars);
-			sentences = sentences.Where(w => w != "").ToArray();
+			RemoveSpecialCharacters(ref inputText);
+			var sentences = SplitTextIntoSentences(inputText);
 
 			// parse to revalent models
+			Text parsedText = SplitSentencesIntoWords(sentences);
+			return parsedText;
+		}
+
+		private static Text SplitSentencesIntoWords(string[] sentences)
+		{
 			Text parsedText = new Text();
 
 			char[] wordsDelimiterChars = { ' ', ',', ':', '\t' };
-			foreach (var _sentence in sentences)
+			foreach (var sent in sentences)
 			{
 				// split into words
-				string[] words = _sentence.Split(wordsDelimiterChars);
+				string[] words = sent.Split(wordsDelimiterChars);
 				List<Word> listWords = words.Where(w => w != "")
-					.Select(word => new Word() {item = word}).ToList();
+					.Select(word => new Word() { item = word }).ToList();
 
 				Sentence sentence = new Sentence();
 
@@ -48,6 +49,25 @@ namespace TextParser.Models
 				parsedText.Add(sentence);
 			}
 			return parsedText;
+		}
+
+		private static string[] SplitTextIntoSentences(string inputText)
+		{
+			// split into sentences
+			char[] sentenceDelimiterChars = { '.', '!', '?', '\n' };
+			string[] sentences = inputText.Split(sentenceDelimiterChars);
+			return sentences.Where(w => w != "").ToArray();
+		}
+
+		private static void RemoveSpecialCharacters(ref string inputText)
+		{
+			char[] specialCharacters =
+				{
+					'\\', '/', '"', '(', ')', '-', '-', '[',']'
+				};
+
+			var res = specialCharacters.Aggregate(inputText, (current, character) => current.Replace(character, ' '));
+			inputText = Regex.Replace(res, @"\s+$\n|\r", "", RegexOptions.Multiline).TrimEnd();//Regex.Replace(inputText, @"\s+", " ");
 		}
 
 		/// <summary>
@@ -71,13 +91,14 @@ namespace TextParser.Models
 					// write each word in sentence
 					for (int j = 0; j < count; j++)
 					{
+						var word = text.Sentences[i].Words[j].item;
 						// do not show separator, if last word
 						if (j == count - 1)
 						{
-							sb.AppendFormat("{0}", text.Sentences[i].Words[j]);
+							sb.AppendFormat("{0}", word );
 							continue;
 						}
-						sb.AppendFormat("{0}{1} ", text.Sentences[i].Words[j], separator);
+						sb.AppendFormat("{0}{1} ", word, separator);
 					}
 					sb.Append("\n");
 				}
@@ -156,6 +177,11 @@ namespace TextParser.Models
 		/// <param name="res">text string</param>
 		private static void SaveToFile(string res)
 		{
+			var path = GetFileName();
+			if (File.Exists(path))
+			{
+				File.Delete(path);
+			}
 			using (StreamWriter file = new System.IO.StreamWriter(GetFileName()))
 			{
 				file.Write(res);

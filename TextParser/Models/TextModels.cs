@@ -41,9 +41,14 @@ namespace TextParser.Models
 		//}
 	}
 
-	public class Word
+	public class Word:IComparable
 	{
 		public string item { get; set; }
+
+		public int CompareTo(object obj)
+		{
+			return String.Compare(item, ((Word)obj).item, StringComparison.CurrentCulture);
+		}
 	}
 
 	enum ParseType
