@@ -21,7 +21,7 @@ namespace TextParser.Models
 			var sentences = SplitTextIntoSentences(inputText);
 
 			// parse to revalent models
-			Text parsedText = SplitSentencesIntoWords(sentences);
+			var parsedText = SplitSentencesIntoWords(sentences);
 			return parsedText;
 		}
 
@@ -56,18 +56,24 @@ namespace TextParser.Models
 			// split into sentences
 			char[] sentenceDelimiterChars = { '.', '!', '?', '\n' };
 			string[] sentences = inputText.Split(sentenceDelimiterChars);
-			return sentences.Where(w => w != "").ToArray();
+			return sentences.Where(w => !w.IsNullOrWhiteSpace()).ToArray();
 		}
 
 		private static void RemoveSpecialCharacters(ref string inputText)
 		{
 			char[] specialCharacters =
 				{
-					'\\', '/', '"', '(', ')', '-', '-', '[',']'
+					'\\', '/', '"', '(', ')', '-', '-', '[',']','{','}','#','$','%','&',';','@',':'
 				};
 
-			var res = specialCharacters.Aggregate(inputText, (current, character) => current.Replace(character, ' '));
-			inputText = Regex.Replace(res, @"\s+$\n|\r", "", RegexOptions.Multiline).TrimEnd();//Regex.Replace(inputText, @"\s+", " ");
+			// replace to white space, becouse "word1@word2"
+			inputText = specialCharacters.Aggregate(inputText, (current, character) => current.Replace(character, ' '));
+			
+			// remove repeated spaces, enter, tab
+			// enter also is sentence delimeter
+
+			//inputText = Regex.Replace(res, @"\s+$\n|\r", "", RegexOptions.Multiline).TrimEnd();//Regex.Replace(inputText, @"\s+", " ");
+			//inputText = Regex.Replace(res, @"\s+", " ", RegexOptions.Multiline).TrimEnd();//Regex.Replace(inputText, @"\s+", " ");
 		}
 
 		/// <summary>
@@ -85,25 +91,19 @@ namespace TextParser.Models
 
 				for (int i = 0; i < text.Sentences.Count; i++)
 				{
-					sb.AppendFormat("Sentence {0}: ", i + 1);
+					sb.AppendFormat("Sentence {0}", i + 1);
 					var count = text.Sentences[i].Words.Count;
 
-					// write each word in sentence
+					// write each word from sentence
 					for (int j = 0; j < count; j++)
 					{
 						var word = text.Sentences[i].Words[j].item;
-						// do not show separator, if last word
-						if (j == count - 1)
-						{
-							sb.AppendFormat("{0}", word );
-							continue;
-						}
-						sb.AppendFormat("{0}{1} ", word, separator);
+						sb.AppendFormat("{0} {1}", separator, word);
 					}
 					sb.Append("\n");
 				}
 				// save parsed xml to disk. access by link "/api/text"
-				// controller should return data in XML format
+				// api controller returns data in XML format
 				ParseToXML(text);
 				return sb.ToString();
 			}

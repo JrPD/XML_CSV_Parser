@@ -17,12 +17,15 @@ using System.Xml.Linq;
 using Microsoft.Ajax.Utilities;
 using TextParser.Models;
 
+
+// API Controller
+// Get, Post requests
 namespace TextParser.Controllers
 {
 	public class TextController : ApiController
 	{
 		/// <summary>
-		/// load xml file from disc
+		/// GET, load xml file from disc
 		/// </summary>
 		/// <returns>return xml file</returns>
 		[HttpGet]
@@ -36,7 +39,7 @@ namespace TextParser.Controllers
 		}
 
 		/// <summary>
-		/// get string from client, and return parsed text(XML or CSV)
+		/// POST, get string from client, and return parsed text(XML or CSV)
 		/// </summary>
 		/// <param name="type">XML or CSV</param>
 		/// <param name="parseText">text to parse</param>

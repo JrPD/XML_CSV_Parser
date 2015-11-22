@@ -8,6 +8,9 @@ using System.Xml.Serialization;
 
 namespace TextParser.Models
 {
+	/// <summary>
+	/// class that represent text, parsed into revalent models
+	/// </summary>
 	public class Text
 	{
 		public List<Sentence> Sentences { get; private set; }
