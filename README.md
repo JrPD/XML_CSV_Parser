@@ -8,3 +8,6 @@ Last query you can see by link /api/text.
 
 Technologies:
 ASP.NET MVC, WEB API
+
+Now site is located at:
+http://parser.gear.host
