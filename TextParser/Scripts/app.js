@@ -12,7 +12,15 @@ function parseDoc(type) {
 		url: uri,
 		data: JSON.stringify(inputText),
 		dataType: "json",
-		contentType: "application/json",
+
+		headers: {
+			Accept: "application/json;  charset=utf-8",
+			"Content-Type": "application/json; charset=utf-8"},
+		//accepts: {
+		//	text: "text/plain",
+		//	xml: "application/xml, text/xml",
+		//	json: "application/json, text/javascript"
+		//},
 		success: function (response) {
 			$("#loadingimage").hide();
 			$("#responsBody").text(response);

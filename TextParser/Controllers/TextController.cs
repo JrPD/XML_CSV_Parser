@@ -41,12 +41,12 @@ namespace TextParser.Controllers
 		/// <param name="inputText">text to parse</param>
 		/// <returns>text, formatted into selected type</returns>
 		[HttpPost]
-		public IHttpActionResult PostText(string type, [FromBody]string inputText)
+		public HttpResponseMessage PostText(string type, [FromBody]string inputText)
 		{
 			// if string is empty 
 			if (string.IsNullOrWhiteSpace(inputText))
 			{
-				return Ok("Empty string");
+				return Request.CreateResponse(HttpStatusCode.NoContent, "Empty string");
 			}
 
 			// parse into revalent models
@@ -54,11 +54,11 @@ namespace TextParser.Controllers
 
 			IFormatter formatter = FormatFactory.GetFormatter(type);
 			string response = formatter.Format(text);
-			
+
 			// save to file
 			Func.SaveToFile(response);
 
-			return Ok(response);
+			return Request.CreateResponse(HttpStatusCode.OK, response);
 		}
 	}
 }
