@@ -5,12 +5,12 @@ function parseDoc(type) {
 	$("#responsBody").hide();
 
 	uri = uri + "/" + type;
-	var parseText = $('#textToParse').val();
+	var inputText = $('#textToParse').val();
 	$.ajax(
 	{
 		type: "POST",
 		url: uri,
-		data: JSON.stringify(parseText),
+		data: JSON.stringify(inputText),
 		dataType: "json",
 		contentType: "application/json",
 		success: function (response) {
