@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Web.Http;
-using System.Xml.Linq;
 using Formatter.Factory;
 using Formatter.Models;
 using Formatter.Formatter;
@@ -25,13 +21,22 @@ namespace TextParser.Controllers
 		/// </summary>
 		/// <returns>return xml file</returns>
 		[HttpGet]
-		public XElement GetText()
+		public HttpResponseMessage GetText()
 		{
 			string filePath = Func.GetFileName();
-			
-			var xml = XElement.Load(filePath);
+			string fileContent = File.ReadAllText(filePath);
+			Text text = Parser.ParseInputText(fileContent);
 
-			return (xml);
+			var formatter = new XMLFormatter();
+			
+			var content = new ObjectContent<Text>(text,		// What we are serializing 
+										formatter);			// The media formatter
+				
+			return new HttpResponseMessage()
+			{
+				StatusCode = HttpStatusCode.OK,
+				Content = content
+			};
 		}
 
 		/// <summary>
@@ -41,25 +46,37 @@ namespace TextParser.Controllers
 		/// <param name="inputText">text to parse</param>
 		/// <returns>text, formatted into selected type</returns>
 		[HttpPost]
-		public HttpResponseMessage PostText(string type, [FromBody]string inputText)
+		public HttpResponseMessage GetText(string type, [FromBody] string inputText)
 		{
 			// if string is empty 
 			if (string.IsNullOrWhiteSpace(inputText))
 			{
 				return Request.CreateResponse(HttpStatusCode.NoContent, "Empty string");
 			}
+			// save to file
+			Func.SaveToFile(inputText);
 
 			// parse into revalent models
 			Text text = Parser.ParseInputText(inputText);
 
-			IFormatter formatter = FormatFactory.GetFormatter(type);
-			string response = formatter.Format(text);
+			MediaTypeFormatter formatter = FormatFactory.GetFormatter(type);
+			
+			IContentNegotiator negotiator = Configuration.Services.GetContentNegotiator();
 
-			// save to file
-			Func.SaveToFile(response);
+			ContentNegotiationResult result = negotiator.Negotiate(
+				typeof(Text), Request, Configuration.Formatters);
 
-			return Request.CreateResponse(HttpStatusCode.OK, response);
+
+			var content = new ObjectContent<Text>(
+				text,									// What we are serializing 
+				formatter,								// The media formatter
+				result.MediaType.MediaType				// The MIME type
+				);
+			return new HttpResponseMessage()
+			{
+				StatusCode = HttpStatusCode.OK,
+				Content = content
+			};
 		}
 	}
 }
-	

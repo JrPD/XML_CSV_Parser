@@ -2,6 +2,7 @@
 
 namespace Formatter.Models
 {
+
 	public class Word:IComparable
 	{
 		public string Item { get; set; }

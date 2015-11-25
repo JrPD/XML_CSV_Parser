@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http.Formatting;
 using Formatter.Formatter;
 using Formatter.Parser;
 
@@ -6,7 +7,7 @@ namespace Formatter.Factory
 {
 	public class FormatFactory
 	{
-		public static IFormatter GetFormatter(string type)
+		public static BufferedMediaTypeFormatter GetFormatter(string type)
 		{
 			// detect parse type
 			ParseType formatType;

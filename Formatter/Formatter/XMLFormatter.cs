@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Xml;
 using Formatter.Models;
@@ -7,23 +11,50 @@ using Formatter.Parser;
 
 namespace Formatter.Formatter
 {
-	class XMLFormatter : IFormatter
+	public class XMLFormatter : BufferedMediaTypeFormatter
 	{
-		/// <summary>
-		/// parse model to XML format.
-		/// </summary>
-		/// <param name="text">text, parset into revalent model classes</param>
-		/// <returns></returns>
-		public string Format(Text text)
+		public XMLFormatter()
 		{
-			// write to memory stream. It good way convert to string then.
-			using (var ms = new MemoryStream())
+			SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/xml"));
+
+			// New code:
+			SupportedEncodings.Add(Encoding.UTF8);
+			//SupportedEncodings.Add(Encoding.GetEncoding("iso-8859-1"));
+			this.MediaTypeMappings.Add(new QueryStringMapping("type", "xml",
+
+			new MediaTypeHeaderValue("application/xml")));
+		}
+		public override bool CanReadType(Type type)
+		{
+			return false;
+		}
+
+		public override bool CanWriteType(Type type)
+		{
+			if (type == typeof (Text))
+			{
+				return true;
+			}
+			return false;
+		}
+
+		public override void WriteToStream(Type type, object value, Stream writeStream, HttpContent content)
+		{
+			var text = value as Text;
+			if (text == null)
+			{
+				throw new InvalidOperationException("Cannot serialize type");
+			}
+
+			Encoding effectiveEncoding = SelectCharacterEncoding(content.Headers);
+
+			using (var writer = new StreamWriter(writeStream, effectiveEncoding))
 			{
 				try
 				{
 					// define xml writer with options
 					//todo accept encoding from headers
-					var xmlWriter = new XmlTextWriter(ms, Encoding.GetEncoding(65001))
+					var xmlWriter = new XmlTextWriter(writer)
 					{
 						Formatting = Formatting.Indented,
 						IndentChar = '\t',
@@ -31,45 +62,37 @@ namespace Formatter.Formatter
 						QuoteChar = '\''
 					};
 
-					WriteDoc(ref xmlWriter, text);
-
-					// convert to string.
-					var res = Encoding.UTF8.GetString(ms.ToArray());
-
-					// save to file.
-					//SaveToFile(res);
-					return res;
-
+					WriteDoc(xmlWriter, text);
 				}
 				catch (Exception)
 				{
-					return "Error occured";
+					throw new InvalidOperationException("Cannot serialize type");
 				}
 			}
 		}
 
-		private void WriteDoc(ref XmlTextWriter xmlWriter, Text text)
+		private void WriteDoc(XmlWriter writer, Text text)
 		{
 			// write xml document
-			xmlWriter.WriteStartDocument(true);								// <?xml version="1.0"?>
-			xmlWriter.WriteStartElement(TextItems.text.ToString());			// <Text>
+			writer.WriteStartDocument(true);		//true						// <?xml version="1.0"?>
+			writer.WriteStartElement(TextItems.text.ToString());			// <Text>
 
 			// write sentences
 			foreach (var sentence in text.Sentences)
 			{
-				xmlWriter.WriteStartElement(TextItems.sentence.ToString()); // <Sentence>
+				writer.WriteStartElement(TextItems.sentence.ToString());	// <Sentence>
 
 				// write words
 				foreach (var word in sentence.Words)
 				{
-					xmlWriter.WriteStartElement(TextItems.word.ToString()); // </Word>
-					xmlWriter.WriteString(word.Item);
-					xmlWriter.WriteEndElement();							// </Word>
+					writer.WriteStartElement(TextItems.word.ToString());	// </Word>
+					writer.WriteString(word.Item);
+					writer.WriteEndElement();								// </Word>
 				}
-				xmlWriter.WriteEndElement();								// </Sentence>
+				writer.WriteEndElement();									// </Sentence>
 			}
-			xmlWriter.WriteEndElement();									// </Text>
-			xmlWriter.Close();
+			writer.WriteEndElement();										// </Text>
+			writer.Close();
 		}
 	}
 }

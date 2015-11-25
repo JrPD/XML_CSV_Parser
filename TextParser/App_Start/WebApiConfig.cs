@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web.Http;
+using Formatter.Formatter;
 
 namespace TextParser
 {
@@ -19,6 +21,11 @@ namespace TextParser
 				routeTemplate: "api/{controller}/{type}",
 				defaults: new { type = RouteParameter.Optional }
 			);
+			ConfigureApis(config);
+		}
+		public static void ConfigureApis(HttpConfiguration config)
+		{
+			config.Formatters.Insert(0, new CSVFormatter());
 		}
 	}
 }

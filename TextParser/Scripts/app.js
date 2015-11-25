@@ -1,3 +1,13 @@
+﻿
+function handleError(response, textStatus) {
+	$("#loadingimage").hide();
+	$("#responsBody").hide();
+}
+function handleSuccess(response, textStatus) {
+	$("#loadingimage").hide();
+	$("#responsBody").text(response);
+	$("#responsBody").show();
+};
 
 function parseDoc(type) {
 	var uri = 'api/text';
@@ -6,29 +16,30 @@ function parseDoc(type) {
 
 	uri = uri + "/" + type;
 	var inputText = $('#textToParse').val();
+
+	
 	$.ajax(
 	{
+		beforeSend: function (req) {
+			req.setRequestHeader("Accept", "text/csv; charset=utf-8");//, application/xml;q=0.9
+		},
+
 		type: "POST",
 		url: uri,
 		data: JSON.stringify(inputText),
-		dataType: "json",
+		contentType: "application/json",
 
-		headers: {
-			Accept: "application/json;  charset=utf-8",
-			"Content-Type": "application/json; charset=utf-8"},
-		//accepts: {
-		//	text: "text/plain",
-		//	xml: "application/xml, text/xml",
-		//	json: "application/json, text/javascript"
-		//},
-		success: function (response) {
-			$("#loadingimage").hide();
-			$("#responsBody").text(response);
-			$("#responsBody").show();
+		statusCode: {
+			204: function () {
+				alert("Text area is empty!");
+			},
+			400: function () {
+				alert("Bad Request. Операция не выполнена.");
+			}
 		},
-		error: function (response) {
-			$("#loadingimage").hide();
-			alert("error", + response.Message.toString());
-		}
+
+
+		success: handleSuccess,
+		error: handleError
 	});
 }
