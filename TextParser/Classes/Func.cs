@@ -37,7 +37,7 @@ namespace TextParser.Classes
 			string filename = ConfigurationManager.AppSettings["filePath"];
 			if (filename.IsNullOrWhiteSpace())
 			{
-				filename = "App_Data\\output.xml";
+				filename = "App_Data\\output.txt";
 			}
 			return  path + filename;
 		}
