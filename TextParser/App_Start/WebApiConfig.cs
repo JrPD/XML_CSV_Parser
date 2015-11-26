@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Formatter.Formatter;
 using System.Web.Http;
-using Formatter.Formatter;
 
 namespace TextParser
 {
@@ -23,6 +19,7 @@ namespace TextParser
 			);
 			//ConfigureApis(config);
 		}
+
 		public static void ConfigureApis(HttpConfiguration config)
 		{
 			config.Formatters.Insert(0, new CSVFormatter());

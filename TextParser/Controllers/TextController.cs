@@ -1,20 +1,14 @@
-﻿using System.IO;
+﻿using Formatter.Factory;
+using Formatter.Formatter;
+using Formatter.Models;
+using Formatter.Parser;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
-using System.Runtime.Serialization;
 using System.Web.Http;
-using System.Xml.Serialization;
-using Formatter.Factory;
-using Formatter.Models;
-using Formatter.Formatter;
-using Formatter.Parser;
 using TextParser.Classes;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-
 
 // API Controller
 // Get, Post requests
@@ -34,14 +28,14 @@ namespace TextParser.Controllers
 			Text text = Parser.ParseInputText(fileContent);
 
 			var formatter = new XMLFormatter();
-			
+
 			var content = new ObjectContent<Text>(
-				text,		// What we are serializing 
+				text,		// What we are serializing
 				formatter,
 				// display result as xml document
 				new MediaTypeHeaderValue("application/xml")
 				);			// The media formatter
-				
+
 			return new HttpResponseMessage()
 			{
 				StatusCode = HttpStatusCode.OK,
@@ -58,7 +52,7 @@ namespace TextParser.Controllers
 		[HttpPost]
 		public HttpResponseMessage GetText(string type, [FromBody] string inputText)
 		{
-			// if string is empty 
+			// if string is empty
 			if (string.IsNullOrWhiteSpace(inputText))
 			{
 				return Request.CreateResponse(HttpStatusCode.NoContent, "Empty string");
@@ -72,7 +66,7 @@ namespace TextParser.Controllers
 			MediaTypeFormatter formatter = FormatFactory.GetFormatter(type);
 
 			var content = new ObjectContent<Text>(
-				text,							// What we are serializing 
+				text,							// What we are serializing
 				formatter//,						// The media formatter
 				//mediaTypeHeaderValue.MediaType	// The MIME type
 				);

@@ -1,11 +1,10 @@
-﻿using System.Configuration;
+﻿using Microsoft.Ajax.Utilities;
+using System.Configuration;
 using System.IO;
 using System.Web;
-using Microsoft.Ajax.Utilities;
 
 namespace TextParser.Classes
 {
-
 	public static class Func
 	{
 		/// <summary>
@@ -39,7 +38,7 @@ namespace TextParser.Classes
 			{
 				filename = "App_Data\\output.txt";
 			}
-			return  path + filename;
+			return path + filename;
 		}
 	}
 }
