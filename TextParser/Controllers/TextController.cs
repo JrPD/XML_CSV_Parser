@@ -5,7 +5,6 @@ using Formatter.Parser;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Web.Http;
 using TextParser.Classes;
@@ -30,11 +29,11 @@ namespace TextParser.Controllers
 			var formatter = new XMLFormatter();
 
 			var content = new ObjectContent<Text>(
-				text,		// What we are serializing
-				formatter,
+				text,										// What we are serializing
+				formatter,									// The media formatter
 				// display result as xml document
-				new MediaTypeHeaderValue("application/xml")
-				);			// The media formatter
+				new MediaTypeHeaderValue("application/xml")	// The media formatter
+				);												
 
 			return new HttpResponseMessage()
 			{
@@ -63,13 +62,16 @@ namespace TextParser.Controllers
 			// parse into revalent models
 			Text text = Parser.ParseInputText(inputText);
 
-			MediaTypeFormatter formatter = FormatFactory.GetFormatter(type);
+			// get formatter from type
+			var formatter = FormatFactory.GetFormatter(type);
 
+			// create respons content
 			var content = new ObjectContent<Text>(
 				text,							// What we are serializing
 				formatter//,						// The media formatter
 				//mediaTypeHeaderValue.MediaType	// The MIME type
 				);
+
 			return new HttpResponseMessage()
 			{
 				StatusCode = HttpStatusCode.OK,
