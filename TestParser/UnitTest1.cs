@@ -66,10 +66,7 @@ namespace TestParser
 		[TestMethod]
 		public void TestCSVFormatter()
 		{
-			var formatter = FormatFactory.GetFormatter("XML");
-
-
-
+			//var formatter = FormatFactory.GetFormatter("XML");
 		}
 	}
 }
