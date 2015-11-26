@@ -1,6 +1,13 @@
 ﻿using System;
+using System.IO;
+using System.Net.Http;
 using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
+using System.Security.Cryptography.X509Certificates;
+using System.Xml;
+using System.Xml.Linq;
 using Formatter.Factory;
+using Formatter.Formatter;
 using Formatter.Models;
 using Formatter.Parser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -64,9 +71,29 @@ namespace TestParser
 
 
 		[TestMethod]
-		public void TestCSVFormatter()
+		public void TestXMLFormatterSerialize()
 		{
-			//var formatter = FormatFactory.GetFormatter("XML");
+			string fileContent = File.ReadAllText("output.txt");
+			Assert.IsNotNull(fileContent, "File is empty");
+			Text text = Parser.ParseInputText(fileContent);
+
+			FileStream fs = new FileStream("output.xml", FileMode.Create); 
+			var xml = new XMLFormatter();
+
+			var content = new ObjectContent<Text>(
+			text,							// What we are serializing
+			xml//,						// The media formatter
+				//mediaTypeHeaderValue.MediaType	// The MIME type
+			);
+			xml.WriteToStream(typeof(Text), text, fs, content);
+		}
+
+		[TestMethod]
+		public void TestXMLFormatterRead()
+		{
+			var content = XElement.Load("output.xml");
+			Assert.IsNotNull(content, "file is empty");
+			Assert.IsInstanceOfType(content, typeof(XElement), "not XML ");
 		}
 	}
 }
