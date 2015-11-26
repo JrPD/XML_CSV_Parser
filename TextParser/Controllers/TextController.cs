@@ -6,7 +6,9 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.Serialization;
 using System.Web.Http;
+using System.Xml.Serialization;
 using TextParser.Classes;
 
 // API Controller
@@ -26,11 +28,15 @@ namespace TextParser.Controllers
 			string fileContent = File.ReadAllText(filePath);
 			Text text = Parser.ParseInputText(fileContent);
 
-			var formatter = new XMLFormatter();
-
+			var xml = new XMLFormatter();
+			//var xml = GlobalConfiguration.Configuration.Formatters.XmlFormatter;
+			//xml.UseXmlSerializer = true;
+			//xml.Indent = true;
+			//xml.SetSerializer<Text>(new XmlSerializer(typeof(Text)));
+		
 			var content = new ObjectContent<Text>(
 				text,										// What we are serializing
-				formatter,									// The media formatter
+				xml,									// The media formatter
 				// display result as xml document
 				new MediaTypeHeaderValue("application/xml")	// The media formatter
 				);												

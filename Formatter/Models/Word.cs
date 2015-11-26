@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Formatter.Models
 {
-
 	public class Word:IComparable
 	{
 		public string Item { get; set; }
