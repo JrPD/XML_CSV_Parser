@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using Formatter.Models;
 
 namespace Formatter.Formatter
 {
-	public class CSVFormatter : BufferedMediaTypeFormatter
+	public class CSVFormatter : MediaTypeFormatter
 	{
 		public CSVFormatter()
 		{
@@ -37,22 +39,34 @@ namespace Formatter.Formatter
 			return false;
 		}
 
-		public override void WriteToStream(Type type, object value, Stream writeStream, HttpContent content)
+		public override Task WriteToStreamAsync(Type type, object value, Stream writeStream, HttpContent content,
+			TransportContext transportContext)
 		{
-			Encoding effectiveEncoding = SelectCharacterEncoding(content.Headers);
-
-			using (var writer = new StreamWriter(writeStream, effectiveEncoding))
+			var taskSource = new TaskCompletionSource<object>();
+			try
 			{
-				var text = value as Text;
-				if (text != null)
+				Encoding effectiveEncoding = SelectCharacterEncoding(content.Headers);
+
+				using (var writer = new StreamWriter(writeStream, effectiveEncoding))
 				{
-					WriteItem(text, writer);
-				}
-				else
-				{
-					throw new InvalidOperationException("Cannot serialize type");
+					var text = value as Text;
+					if (text == null)
+					{
+						text = new Text();
+					}
+					else
+					{
+						WriteItem(text, writer);
+					}
+					taskSource.SetResult(null);
+
 				}
 			}
+			catch (Exception e)
+			{
+				taskSource.SetException(e);
+			}
+			return taskSource.Task;
 		}
 
 		private void WriteItem(Text text, StreamWriter writer)

@@ -85,7 +85,7 @@ namespace TestParser
 			xml//,						// The media formatter
 				//mediaTypeHeaderValue.MediaType	// The MIME type
 			);
-			xml.WriteToStream(typeof(Text), text, fs, content);
+			xml.WriteToStreamAsync(typeof(Text), text, fs, content, null);
 		}
 
 		[TestMethod]

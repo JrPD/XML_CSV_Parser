@@ -75,7 +75,7 @@ namespace TextParser.Controllers
 			var content = new ObjectContent<Text>(
 				text,							// What we are serializing
 				formatter//,						// The media formatter
-				//mediaTypeHeaderValue.MediaType	// The MIME type
+				//mediaTypeHeaderValue.MediaType	// The MIME (multimedia internet message exchange )type
 				);
 
 			return new HttpResponseMessage()

@@ -7,7 +7,7 @@ namespace Formatter.Factory
 {
 	public class FormatFactory
 	{
-		public static BufferedMediaTypeFormatter GetFormatter(string type)
+		public static MediaTypeFormatter GetFormatter(string type)
 		{
 			// detect parse type
 			ParseType formatType;
