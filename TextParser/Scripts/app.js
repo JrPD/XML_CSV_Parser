@@ -17,18 +17,16 @@ function parseDoc(type) {
 	uri = uri + "/" + type;
 	var inputText = $('#textToParse').val();
 
-	
+
 	$.ajax(
 	{
-		beforeSend: function (req) {
-			req.setRequestHeader("Accept", "text/csv; charset=utf-8");//, application/xml;q=0.9
+		beforeSend: function(req) {
+			req.setRequestHeader("Accept", "text/csv, text/plain;charset=utf-8"); //, application/xml;q=0.9
 		},
-
 		type: "POST",
 		url: uri,
 		data: JSON.stringify(inputText),
 		contentType: "application/json",
-
 		statusCode: {
 			204: function () {
 				alert("Text area is empty!");

@@ -15,14 +15,12 @@ namespace Formatter.Formatter
 	{
 		public XMLFormatter()
 		{
-			SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/xml"));
+			// display result as text. No need parse doc in JS code
+			SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/plain"));
 
-			// New code:
 			SupportedEncodings.Add(Encoding.UTF8);
-			//SupportedEncodings.Add(Encoding.GetEncoding("iso-8859-1"));
-			this.MediaTypeMappings.Add(new QueryStringMapping("type", "xml",
-
-			new MediaTypeHeaderValue("application/xml")));
+			this.MediaTypeMappings.Add(new QueryStringMapping("type", "text",
+				new MediaTypeHeaderValue("text/palin")));
 		}
 		public override bool CanReadType(Type type)
 		{

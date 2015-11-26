@@ -21,11 +21,12 @@ namespace TextParser
 				routeTemplate: "api/{controller}/{type}",
 				defaults: new { type = RouteParameter.Optional }
 			);
-			ConfigureApis(config);
+			//ConfigureApis(config);
 		}
 		public static void ConfigureApis(HttpConfiguration config)
 		{
 			config.Formatters.Insert(0, new CSVFormatter());
+			config.Formatters.Insert(1, new XMLFormatter());
 		}
 	}
 }

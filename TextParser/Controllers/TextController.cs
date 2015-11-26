@@ -2,12 +2,18 @@
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
+using System.Runtime.Serialization;
 using System.Web.Http;
+using System.Xml.Serialization;
 using Formatter.Factory;
 using Formatter.Models;
 using Formatter.Formatter;
 using Formatter.Parser;
 using TextParser.Classes;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 
 // API Controller
@@ -29,13 +35,17 @@ namespace TextParser.Controllers
 
 			var formatter = new XMLFormatter();
 			
-			var content = new ObjectContent<Text>(text,		// What we are serializing 
-										formatter);			// The media formatter
+			var content = new ObjectContent<Text>(
+				text,		// What we are serializing 
+				formatter,
+				// display result as xml document
+				new MediaTypeHeaderValue("application/xml")
+				);			// The media formatter
 				
 			return new HttpResponseMessage()
 			{
 				StatusCode = HttpStatusCode.OK,
-				Content = content
+				Content = content,
 			};
 		}
 
@@ -60,17 +70,11 @@ namespace TextParser.Controllers
 			Text text = Parser.ParseInputText(inputText);
 
 			MediaTypeFormatter formatter = FormatFactory.GetFormatter(type);
-			
-			IContentNegotiator negotiator = Configuration.Services.GetContentNegotiator();
-
-			ContentNegotiationResult result = negotiator.Negotiate(
-				typeof(Text), Request, Configuration.Formatters);
-
 
 			var content = new ObjectContent<Text>(
-				text,									// What we are serializing 
-				formatter,								// The media formatter
-				result.MediaType.MediaType				// The MIME type
+				text,							// What we are serializing 
+				formatter//,						// The media formatter
+				//mediaTypeHeaderValue.MediaType	// The MIME type
 				);
 			return new HttpResponseMessage()
 			{
