@@ -56,7 +56,6 @@
   <ItemGroup>
     <Compile Include="Factory\FormatFactory.cs" />
     <Compile Include="Formatter\CSVFormatter.cs" />
-    <Compile Include="Parser\Enums.cs" />
     <Compile Include="Models\Sentence.cs" />
     <Compile Include="Models\Word.cs" />
     <Compile Include="Models\Text.cs" />

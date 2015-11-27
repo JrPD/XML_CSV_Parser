@@ -1,13 +1,14 @@
 ﻿
-function handleError(response, textStatus) {
+function handleError(response) {
 	$("#loadingimage").hide();
 	$("#responsBody").hide();
+	alert(response);
 }
-function handleSuccess(response, textStatus) {
+function handleSuccess(response) {
 	$("#loadingimage").hide();
 	$("#responsBody").text(response);
 	$("#responsBody").show();
-};
+}
 
 function parseDoc(type) {
 	var uri = 'api/text';
@@ -16,7 +17,6 @@ function parseDoc(type) {
 
 	uri = uri + "/" + type;
 	var inputText = $('#textToParse').val();
-
 
 	$.ajax(
 	{
@@ -35,7 +35,6 @@ function parseDoc(type) {
 				alert("Bad Request. Операция не выполнена.");
 			}
 		},
-
 
 		success: handleSuccess,
 		error: handleError

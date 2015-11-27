@@ -29,11 +29,7 @@ namespace TextParser.Controllers
 			Text text = Parser.ParseInputText(fileContent);
 
 			var xml = new XMLFormatter();
-			//var xml = GlobalConfiguration.Configuration.Formatters.XmlFormatter;
-			//xml.UseXmlSerializer = true;
-			//xml.Indent = true;
-			//xml.SetSerializer<Text>(new XmlSerializer(typeof(Text)));
-		
+	
 			var content = new ObjectContent<Text>(
 				text,										// What we are serializing
 				xml,									// The media formatter
@@ -73,7 +69,7 @@ namespace TextParser.Controllers
 
 			// create respons content
 			var content = new ObjectContent<Text>(
-				text,							// What we are serializing
+				text,								// What we are serializing
 				formatter//,						// The media formatter
 				//mediaTypeHeaderValue.MediaType	// The MIME (multimedia internet message exchange )type
 				);

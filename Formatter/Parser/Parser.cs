@@ -21,26 +21,31 @@ namespace Formatter.Parser
 		{
 			Text parsedText = new Text();
 
-			char[] wordsDelimiterChars = { ' ', ',', ':', '\t' };
+			char[] delimiterChars = { ' ', ',', ':', '\t' };
 			foreach (var sent in sentences)
 			{
 				// split into words
-				string[] words = sent.Split(wordsDelimiterChars);
+				string[] words = sent.Split(delimiterChars);
 				List<Word> listWords = words.Where(w => w != "")
 					.Select(word => new Word() { Item = word }).ToList();
 
-				Sentence sentence = new Sentence();
-
-				foreach (var word in listWords)
-				{
-					sentence.Add(word);
-				}
+				Sentence sentence = AddWordsToSentence(listWords);
 
 				// sort words
 				sentence.Words.Sort();
 				parsedText.Add(sentence);
 			}
 			return parsedText;
+		}
+
+		private static Sentence AddWordsToSentence(List<Word> listWords)
+		{
+			Sentence sentence = new Sentence();
+			foreach (var word in listWords)
+			{
+				sentence.Add(word);
+			}
+			return sentence;
 		}
 
 		private static string[] SplitTextIntoSentences(string inputText)
@@ -60,10 +65,6 @@ namespace Formatter.Parser
 
 			// replace to white space, becouse "word1@word2"
 			inputText = specialCharacters.Aggregate(inputText, (current, character) => current.Replace(character, ' '));
-
-			// remove repeated spaces, enter, tab
-			// enter also is sentence delimeter
-
 			//inputText = Regex.Replace(res, @"\s+$\n|\r", "", RegexOptions.Multiline).TrimEnd();//Regex.Replace(inputText, @"\s+", " ");
 		}
 	}

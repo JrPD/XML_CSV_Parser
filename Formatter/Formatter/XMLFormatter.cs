@@ -93,5 +93,12 @@ namespace Formatter.Formatter
 			writer.WriteEndElement();										// </Text>
 			writer.Close();
 		}
+
+		enum TextItems
+		{
+			text,
+			sentence,
+			word
+		}
 	}
 }

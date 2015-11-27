@@ -9,16 +9,7 @@ namespace Formatter.Factory
 	{
 		public static MediaTypeFormatter GetFormatter(string type)
 		{
-			// detect parse type
-			ParseType formatType;
-			try
-			{
-				formatType = (ParseType)Enum.Parse(typeof(ParseType), type);
-			}
-			catch (Exception)
-			{
-				formatType = ParseType.XML;
-			}
+			ParseType formatType = GetType(type);
 
 			// select instance of which formatter must be returned
 			switch (formatType)
@@ -36,6 +27,27 @@ namespace Formatter.Factory
 					return new XMLFormatter();
 				}
 			}
+		}
+	
+		private static ParseType GetType(string type)
+		{
+			// detect parse type
+			ParseType formatType;
+			try
+			{
+				formatType = (ParseType) Enum.Parse(typeof (ParseType), type);
+			}
+			catch (Exception)
+			{
+				formatType = ParseType.XML;
+			}
+			return formatType;
+		}
+
+		enum ParseType
+		{
+			XML,
+			CSV
 		}
 	}
 }
